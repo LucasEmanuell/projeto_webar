@@ -44,7 +44,7 @@
         <a-entity
           id="toca-discos"
           gltf-model="#record-player"
-          scale="0.5 0.5 0.5"
+          scale="3 3 3"
           position="0 0.01 0"
           rotation="-90 0 0"
           class="clickable"
@@ -69,8 +69,8 @@
           const el = this.el;
           const feedback = document.getElementById('feedback');
           let girando = false;
-          const escalaBase   = { x: 0.5, y: 0.5, z: 0.5 };
-          const escalaGrande = { x: 0.7, y: 0.7, z: 0.7 };
+          const escalaBase   = { x: 3, y: 3, z: 3 };
+          const escalaGrande = { x: 4, y: 4, z: 4 };
           let feedbackTimer = null;
 
           function mostrarFeedback(msg) {
