@@ -37,19 +37,19 @@
       vr-mode-ui="enabled: false"
     >
       <a-assets>
-        <a-asset-item id="record-player" src="modelo/record_player.glb"></a-asset-item>
+        <a-asset-item id="record-player" src="modelo/vinyl.glb"></a-asset-item>
       </a-assets>
 
       <a-marker preset="hiro" id="marcador" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
         <a-entity
           id="toca-discos"
           gltf-model="#record-player"
-          scale="0.3 0.3 0.3"
-          position="0 0 0"
-          rotation="0 0 0"
+          scale="0.5 0.5 0.5"
+          position="0 0.01 0"
+          rotation="-90 0 0"
           class="clickable"
           player-interacao
-          animation__girar="property: rotation; from: 0 0 0; to: 0 360 0;
+          animation__girar="property: rotation; from: -90 0 0; to: -90 360 0;
                             dur: 5000; easing: linear; loop: true; autoplay: false;
                             startEvents: iniciarGiro; pauseEvents: pausarGiro"
         ></a-entity>
@@ -69,8 +69,8 @@
           const el = this.el;
           const feedback = document.getElementById('feedback');
           let girando = false;
-          const escalaBase   = { x: 0.3, y: 0.3, z: 0.3 };
-          const escalaGrande = { x: 0.4, y: 0.4, z: 0.4 };
+          const escalaBase   = { x: 0.5, y: 0.5, z: 0.5 };
+          const escalaGrande = { x: 0.7, y: 0.7, z: 0.7 };
           let feedbackTimer = null;
 
           function mostrarFeedback(msg) {
