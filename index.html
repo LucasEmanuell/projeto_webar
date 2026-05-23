@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Record Player AR</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+
+      #feedback {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        font-family: sans-serif;
+        font-size: 14px;
+        padding: 8px 18px;
+        border-radius: 20px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 999;
+      }
+      #feedback.visible { opacity: 1; }
+    </style>
+  </head>
+  <body>
+    <div id="feedback">Toque para girar</div>
+
+    <a-scene
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+      renderer="logarithmicDepthBuffer: true; antialias: true;"
+      vr-mode-ui="enabled: false"
+    >
+      <a-assets>
+        <a-asset-item id="record-player" src="modelo/record_player.glb"></a-asset-item>
+      </a-assets>
+
+      <a-marker preset="hiro" id="marcador">
+        <a-entity
+          id="toca-discos"
+          gltf-model="#record-player"
+          scale="0.3 0.3 0.3"
+          position="0 0 0"
+          rotation="0 0 0"
+          class="clickable"
+          player-interacao
+          animation__girar="property: rotation; from: 0 0 0; to: 0 360 0;
+                            dur: 5000; easing: linear; loop: true; autoplay: false;
+                            startEvents: iniciarGiro; pauseEvents: pausarGiro"
+        ></a-entity>
+      </a-marker>
+
+      <a-entity camera>
+        <a-entity
+          cursor="fuse: false; rayOrigin: mouse"
+          raycaster="objects: .clickable; far: 100"
+        ></a-entity>
+      </a-entity>
+    </a-scene>
+
+    <script>
+      AFRAME.registerComponent('player-interacao', {
+        init: function () {
+          const el = this.el;
+          const feedback = document.getElementById('feedback');
+          let girando = false;
+          const escalaBase   = { x: 0.3, y: 0.3, z: 0.3 };
+          const escalaGrande = { x: 0.4, y: 0.4, z: 0.4 };
+          let feedbackTimer = null;
+
+          function mostrarFeedback(msg) {
+            feedback.textContent = msg;
+            feedback.classList.add('visible');
+            clearTimeout(feedbackTimer);
+            feedbackTimer = setTimeout(() => feedback.classList.remove('visible'), 1800);
+          }
+
+          // Interação 1: pressionar e segurar → amplia o modelo
+          el.addEventListener('mousedown', function () {
+            el.setAttribute('scale', escalaGrande);
+          });
+
+          el.addEventListener('mouseup', function () {
+            el.setAttribute('scale', escalaBase);
+          });
+
+          // Interação 2: toque rápido → liga/desliga rotação (showcase 360°)
+          el.addEventListener('click', function () {
+            girando = !girando;
+            if (girando) {
+              el.emit('iniciarGiro');
+              mostrarFeedback('▶ Tocando');
+            } else {
+              el.emit('pausarGiro');
+              mostrarFeedback('⏸ Pausado');
+            }
+          });
+
+          document.getElementById('marcador').addEventListener('markerFound', function () {
+            mostrarFeedback('Toque no toca-discos');
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
